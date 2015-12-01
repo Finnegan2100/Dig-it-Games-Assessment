@@ -10,7 +10,7 @@
         equationNumber = 1;
     
     
-    
+    //COMMENT FOR GIT
     window.addEventListener("mousemove",function onMouseMove(evt) {
         
         var x = evt.x;
