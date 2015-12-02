@@ -1,9 +1,70 @@
 (function() {
 
     var canvas = document.getElementById("myCanvas"),
-        context = canvas.getContext("2d"),
+        context = canvas.getContext("2d");
+    
+    
+    var newGameWidth, newGameHeight;
+
+
+    var game = {
+            element: document.getElementById("myCanvas"),
+            width: 650,
+            height: 650,
+            safeWidth: 700,
+            safeHeight: 700
+
+        },
+
+        resizeGame = function () {
+
+            var viewport, newGameX, newGameY;
+
+            viewport = {
+                width: window.innerWidth,
+                height: window.innerHeight
+            };
+
+            if (game.height / game.width > viewport.height / viewport.width) {
+                if (game.safeHeight / game.width > viewport.height / viewport.width) {
+  
+                    newGameHeight = viewport.height * game.height / game.safeHeight;
+                    newGameWidth = newGameHeight * game.width / game.height;
+                } else {
+
+                    newGameWidth = viewport.width;
+                    newGameHeight = newGameWidth * game.height / game.width;
+                }
+            } else {
+                if (game.height / game.safeWidth > viewport.height / viewport.width) {
+   
+                    newGameHeight = viewport.height;
+                    newGameWidth = newGameHeight * game.width / game.height;
+                } else {
+
+                    newGameWidth = viewport.width * game.width / game.safeWidth;
+                    newGameHeight = newGameWidth * game.height / game.width;
+                }
+            }
+
+            game.element.style.width = newGameWidth + "px";
+            game.element.style.height = newGameHeight + "px";
+
+            newGameX = (viewport.width - newGameWidth) / 2;
+            newGameY = (viewport.height - newGameHeight) / 2;
+
+
+            // Set the new padding of the game so it will be centered
+            game.element.style.marginLeft = newGameY + "px " + newGameX + "px";
+            game.element.style.marginBottom = newGameY + "px " + newGameX + "px";
+        };
+
+    window.addEventListener("resize", resizeGame);
+    resizeGame();
+
+    var ratio = game.width / game.height;
         
-        GAMESTATE = "END_OF_GAME_SCREEN",
+    var GAMESTATE = "MAIN_MENU",
         
         titleColor = "#0B9CE5",
         titleColorEnd1 = "#0B9CE5",
@@ -39,6 +100,11 @@
 
         Mouse.x -= canvas.offsetLeft;
         Mouse.y -= canvas.offsetTop;
+        
+        Mouse.x *= (game.width / newGameWidth) / 1.1;
+        Mouse.y *= (game.height / newGameHeight) / 1.1;
+        
+        console.log(Mouse.x,Mouse.y);
         
         Touch.x = undefined;
         Touch.y = undefined;
@@ -106,6 +172,9 @@
         Touch.y = evt.targetTouches[0].pageY - canvas.offsetTop;
         evt.preventDefault();
         
+        Touch.x *= (game.width / newGameWidth) / 1.1;
+        Touch.y *= (game.height / newGameHeight) / 1.1;
+        
         Mouse.x = undefined;
         Mouse.y = undefined;
         
@@ -127,6 +196,19 @@
                 overStartButton = false;
                 render(); 
             }
+        }
+        
+         if (overStartButton) {
+            GAMESTATE = "EQUATION_SCREEN";
+            render();
+        }  
+        if (overMainMenuButton) {
+            GAMESTATE = "MAIN_MENU";
+            resetGame();
+        }
+        if (overNewGameButton) {
+            GAMESTATE = "EQUATION_SCREEN";
+            resetGame();
         }
         
 
@@ -175,6 +257,9 @@
         x -= canvas.offsetLeft;
         y -= canvas.offsetTop;
         
+        x *= (game.width / newGameWidth) / 1.1;
+        y *= (game.height / newGameHeight) / 1.1;
+        
         if (overStartButton) {
             GAMESTATE = "EQUATION_SCREEN";
             render();
@@ -206,12 +291,16 @@
          }
     });
     
-     window.addEventListener("touchstart",function onTouchStart(evt) {
+       window.addEventListener("touchend",function onTouchEnd(evt) {
         
        Touch.x = evt.targetTouches[0].pageX - canvas.offsetLeft;
        Touch.y = evt.targetTouches[0].pageY - canvas.offsetTop;
        evt.preventDefault();
+         
+        Touch.x *= (game.width / newGameWidth) / 1.1;
+        Touch.y *= (game.height / newGameHeight) / 1.1; 
         
+        /*   
         if (overStartButton) {
             GAMESTATE = "EQUATION_SCREEN";
             render();
@@ -224,6 +313,20 @@
             GAMESTATE = "EQUATION_SCREEN";
             resetGame();
         }
+        */
+        
+    });
+    
+     window.addEventListener("touchstart",function onTouchStart(evt) {
+        
+       Touch.x = evt.targetTouches[0].pageX - canvas.offsetLeft;
+       Touch.y = evt.targetTouches[0].pageY - canvas.offsetTop;
+       evt.preventDefault();
+         
+        Touch.x *= (game.width / newGameWidth) / 1.1;
+        Touch.y *= (game.height / newGameHeight) / 1.1; 
+        
+        
         
         if (GAMESTATE === "EQUATION_SCREEN") {   
              
@@ -498,7 +601,6 @@
             context.fillText("MAIN MENU",420,550);    
             break;    
                 
-                
                 function drawAnswerBoxes(len) {
 
                     var startingPoint;
@@ -521,7 +623,7 @@
    
                             if (carryingNumber) {
                                 
-                                if (Touch.x === undefined) {
+                                if (Touch.x === undefined) {  //IF PLAYER IS USING MOUSE CONTROLS
                         
                                     if (Math.abs(Mouse.x - startingPoint) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
@@ -655,7 +757,7 @@
                                     }
                                 }
                                 
-                                if (Mouse.x === undefined) {
+                                if (Mouse.x === undefined) {  //IF PLAYER IS USING TOUCH CONTROLS
                         
                                     if (Math.abs(Touch.x - startingPoint) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
