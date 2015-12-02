@@ -53,8 +53,6 @@
             newGameX = (viewport.width - newGameWidth) / 2;
             newGameY = (viewport.height - newGameHeight) / 2;
 
-
-            // Set the new padding of the game so it will be centered
             game.element.style.marginLeft = newGameY + "px " + newGameX + "px";
             game.element.style.marginBottom = newGameY + "px " + newGameX + "px";
         };
@@ -80,6 +78,7 @@
         answerSpaceCoords = [],
         currentBoxIndex,
         carryingNumber = false,
+        canSwitchEquations = true,
         
         numbers = [],
         correctSums = [],
@@ -103,8 +102,6 @@
         
         Mouse.x *= (game.width / newGameWidth) / 1.1;
         Mouse.y *= (game.height / newGameHeight) / 1.1;
-        
-        console.log(Mouse.x,Mouse.y);
         
         Touch.x = undefined;
         Touch.y = undefined;
@@ -366,17 +363,28 @@
   
     });
     
-    function switchEquation() {
-        
-        playerAnswersX = [];
-        playerAnswersValue = [];
-        playerAnswersFinal = [];
-        overNumberButtons = [false,false,false,false,false,false,false,false,false,false];
-        canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
-        currentBoxIndex = [];
-        carryingNumber = false;        
-        currentTurn++;
-    }
+    
+     function switchEquation() {
+         
+         if (canSwitchEquations) {
+            window.setTimeout(pause,1000);
+            canSwitchEquations = false; 
+         }
+         
+         function pause() {
+             
+            playerAnswersX = [];
+            playerAnswersValue = [];
+            playerAnswersFinal = [];
+            overNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+            canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+            currentBoxIndex = [];
+            carryingNumber = false;        
+            currentTurn++;
+            canSwitchEquations = true; 
+         }
+            
+        }
     
     function generateRandomNumbers(total) {
         
@@ -620,6 +628,7 @@
                         }
                         context.fillStyle = "#ccc";
                         context.fillRect(startingPoint + i * 80,360,50,50); 
+                        
    
                             if (carryingNumber) {
                                 
@@ -957,25 +966,25 @@
                 case 1:
                     
                 finalDigits.push(x); 
-                switchEquation();    
+                switchEquation();   
                 break;
                     
                 case 2:
                     
                 finalDigits.push(x); 
-                switchEquation();      
+                switchEquation();        
                 break; 
                     
                 case 3: 
     
                 finalDigits.push(x); 
-                switchEquation();      
+                switchEquation();       
                 break;  
                     
                 case 4: 
      
                 finalDigits.push(x); 
-                switchEquation();      
+                switchEquation();         
                 break;
                     
                 case 5: 
