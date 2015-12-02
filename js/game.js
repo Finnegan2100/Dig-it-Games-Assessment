@@ -16,11 +16,12 @@
         overNumberButtons = [false,false,false,false,false,false,false,false,false,false],
         canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false],
         numberButtonXCoords = [],
+        currentBoxIndex,
         
         numbers = [],
         correctSums = [],
         playerAnswers = [],
-        currentTurn = 2,
+        currentTurn = 1,
         
         Mouse = {};
   
@@ -53,22 +54,7 @@
             }
         }
         
-         if (GAMESTATE === "EQUATION_SCREEN") {
-             
-             for (var i = 0; i < 10; i++) {
-                 
-                 if (Mouse.x > numberButtonXCoords[i] && Mouse.x < numberButtonXCoords[i] + 50) {
-                     if (Mouse.y > 490 && Mouse.y < 550) {
-                         overNumberButtons[i] = true;                     
-                     } else {
-                         overNumberButtons[i] = false;
-                 }   
-             } else {
-                     overNumberButtons[i] = false;
-                }  
-            }
-         }
-        
+
          if (GAMESTATE === "END_OF_GAME_SCREEN") {
         
             if (Mouse.x > 40 && Mouse.x < 180) {
@@ -126,13 +112,23 @@
             GAMESTATE = "EQUATION_SCREEN";
             resetGame();
         }
-        for (var i = 0; i < 10; i++) {
-            if (overNumberButtons[i] === true) {
-                canMoveNumberButtons[i] = true;
-            } else {
-                canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];  
+        
+        if (GAMESTATE === "EQUATION_SCREEN") {
+             
+             for (var i = 0; i < 10; i++) {
+                 
+                 if (Mouse.x > numberButtonXCoords[i] && Mouse.x < numberButtonXCoords[i] + 50) {
+                     if (Mouse.y > 490 && Mouse.y < 550) {
+                         overNumberButtons[i] = true;
+                         currentBoxIndex = i;
+                     } else {
+                         overNumberButtons[i] = false;
+                 }   
+             } else {
+                     overNumberButtons[i] = false;
+                }  
             }
-        }
+         }
     })
     
     function generateRandomNumbers(total) {
@@ -336,18 +332,18 @@
                         context.fillStyle = "#eee";
                         x = 20 + i * 57;
                         numberButtonXCoords.push(x);
-                            
-                         if (canMoveNumberButtons[i] === true) {
-                            x = Mouse.x;
-                             y = Mouse.y;
-                        }
-                        
-                        context.fillRect(x,y,w,h);
-                        context.fillStyle = "#ffb800";
-                        context.font = "20pt Verdana";
-                        context.fillText(i.toString(),35 + i * 57,535);
-                        
-                        
+                      
+                        if (i === currentBoxIndex && Mouse.y < 540 && Mouse.y > 300) {
+                            context.fillRect(Mouse.x - 15,Mouse.y - 15,w,h);
+                            context.fillStyle = "#ffb800";
+                            context.font = "20pt Verdana";
+                            context.fillText(i.toString(),Mouse.x,Mouse.y + 20);
+                        } else {
+                            context.fillRect(x,y,w,h);
+                            context.fillStyle = "#ffb800";
+                            context.font = "20pt Verdana";
+                            context.fillText(i.toString(),35 + i * 57,y + 35);
+                        }    
                     }
                 }
             }   
