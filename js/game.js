@@ -3,7 +3,7 @@
     var canvas = document.getElementById("myCanvas"),
         context = canvas.getContext("2d"),
         
-        GAMESTATE = "MAIN_MENU",
+        GAMESTATE = "END_OF_GAME_SCREEN",
         
         titleColor = "#0B9CE5",
         titleColorEnd1 = "#0B9CE5",
@@ -17,6 +17,7 @@
         canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false],
         numberButtonXCoords = [],
         currentBoxIndex,
+        carryingNumber = false,
         
         numbers = [],
         correctSums = [],
@@ -113,7 +114,7 @@
             resetGame();
         }
         
-        if (GAMESTATE === "EQUATION_SCREEN") {
+        if (GAMESTATE === "EQUATION_SCREEN") {   
              
              for (var i = 0; i < 10; i++) {
                  
@@ -129,7 +130,16 @@
                 }  
             }
          }
+        
+        if (carryingNumber) {
+            console.log("hello!");  
+        }
     })
+    
+    function switchEquation() {
+        
+        currentTurn++;
+    }
     
     function generateRandomNumbers(total) {
         
@@ -170,6 +180,7 @@
         
         render();
         window.setTimeout(update,30);
+        
               
     }
           
@@ -245,8 +256,8 @@
                 break; 
                     
                 case 4: 
-                context.fillText(numbers[6],100,260);
-                context.fillText(numbers[7],370,260);
+                context.fillText(numbers[6],240,200);
+                context.fillText(numbers[7],240,320);
                 drawAnswerBoxes(correctSums[3].toString().length);      
                 break;  
                     
@@ -315,8 +326,50 @@
                         } else {
                             startingPoint = 60;   
                         }
-                        context.fillStyle = "#eee";
-                        context.fillRect(startingPoint + i * 80,360,50,50);    
+                        context.fillStyle = "#ccc";
+                        context.fillRect(startingPoint + i * 80,360,50,50); 
+                        
+                        if (carryingNumber) {
+                            if (Math.abs(Mouse.x - startingPoint) < 40 && 
+                                Math.abs(Mouse.y - 360) < 40) {
+                                    context.fillStyle = "#ffb800";
+                                    context.font = "20pt Verdana";
+                                    context.fillText(currentBoxIndex.toString(),
+                                                     startingPoint + 20,395);
+                            }
+                            if (Math.abs(Mouse.x - (startingPoint + 80)) < 40 && 
+                                Math.abs(Mouse.y - 360) < 40) {
+                                   context.fillStyle = "#ffb800";
+                                    context.font = "20pt Verdana";
+                                    context.fillText(currentBoxIndex.toString(),
+                                                     startingPoint + 100,395);
+                                
+                            }
+                            if (Math.abs(Mouse.x - (startingPoint + 160)) < 40 && 
+                                Math.abs(Mouse.y - 360) < 40) {
+                                   context.fillStyle = "#ffb800";
+                                    context.font = "20pt Verdana";
+                                    context.fillText(currentBoxIndex.toString(),
+                                                     startingPoint + 180,395);
+                                 
+                            }
+                            if (Math.abs(Mouse.x - (startingPoint + 240)) < 40 && 
+                                Math.abs(Mouse.y - 360) < 40) {
+                                   context.fillStyle = "#ffb800";
+                                    context.font = "20pt Verdana";
+                                    context.fillText(currentBoxIndex.toString(),
+                                                     startingPoint + 260,395);
+                                
+                            }
+                             if (Math.abs(Mouse.x - (startingPoint + 320)) < 40 && 
+                                Math.abs(Mouse.y - 360) < 40) {
+                                    context.fillStyle = "#ffb800";
+                                    context.font = "20pt Verdana";
+                                    context.fillText(currentBoxIndex.toString(),
+                                                     startingPoint + 340,395);
+                                  
+                            }
+                        }
                     }   
                 }
                 
@@ -334,6 +387,7 @@
                         numberButtonXCoords.push(x);
                       
                         if (i === currentBoxIndex && Mouse.y < 540 && Mouse.y > 300) {
+                            carryingNumber = true;
                             context.fillRect(Mouse.x - 15,Mouse.y - 15,w,h);
                             context.fillStyle = "#ffb800";
                             context.font = "20pt Verdana";
