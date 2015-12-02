@@ -80,6 +80,7 @@
         currentBoxIndex,
         carryingNumber = false,
         canSwitchEquations = true,
+        canEvaluateAnswer = true,
         
         numbers = [],
         correctSums = [],
@@ -199,22 +200,11 @@
             }
         }
         
-         if (overStartButton) {
-            GAMESTATE = "EQUATION_SCREEN";
-            render();
-        }  
-        if (overMainMenuButton) {
-            GAMESTATE = "MAIN_MENU";
-            resetGame();
-        }
-        if (overNewGameButton) {
-            GAMESTATE = "EQUATION_SCREEN";
-            resetGame();
-        }
+       
         
 
          if (GAMESTATE === "END_OF_GAME_SCREEN") {
-        
+       
             if (Touch.x > 40 && Touch.x < 180) {
                 if (Touch.y > 500 && Touch.y < 570) {
                     titleColorEnd1 = "#f00";
@@ -291,8 +281,8 @@
             }
          }
     });
-    
-       window.addEventListener("touchend",function onTouchEnd(evt) {
+/*
+       window.addEventListener("touchend",function onTouchStart(evt) {
         
        Touch.x = evt.targetTouches[0].pageX - canvas.offsetLeft;
        Touch.y = evt.targetTouches[0].pageY - canvas.offsetTop;
@@ -300,24 +290,11 @@
          
         Touch.x *= (game.width / newGameWidth) / 1.1;
         Touch.y *= (game.height / newGameHeight) / 1.1; 
-        
-        /*   
-        if (overStartButton) {
-            GAMESTATE = "EQUATION_SCREEN";
-            render();
-        }  
-        if (overMainMenuButton) {
-            GAMESTATE = "MAIN_MENU";
-            resetGame();
-        }
-        if (overNewGameButton) {
-            GAMESTATE = "EQUATION_SCREEN";
-            resetGame();
-        }
-        */
+   
         
     });
-    
+*/
+ 
      window.addEventListener("touchstart",function onTouchStart(evt) {
         
        Touch.x = evt.targetTouches[0].pageX - canvas.offsetLeft;
@@ -354,17 +331,37 @@
         canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
         
         carryingNumber = false;
+        canEvaluateAnswer = true;     
         
   
     });
     
     window.addEventListener("touchend",function onTouchEnd(evt) {
         
+        if (currentTurn < 5) {
+            
+              if (overStartButton) {
+                GAMESTATE = "EQUATION_SCREEN";
+                render();
+            }  
+        } else {
+        
+            if (overMainMenuButton) {
+                GAMESTATE = "MAIN_MENU";
+                resetGame();
+            }
+            if (overNewGameButton) {
+                GAMESTATE = "EQUATION_SCREEN";
+                resetGame();
+            }
+        
+        }
         
         overNumberButtons = [false,false,false,false,false,false,false,false,false,false];
         canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
         
         carryingNumber = false;
+        canEvaluateAnswer = true;  
   
     });
     
@@ -429,6 +426,7 @@
     function update() {
         
         render();
+        console.log(GAMESTATE);
         window.setTimeout(update,30);          
     }
           
@@ -539,9 +537,12 @@
             context.fillText(numbers[0] + " + " + numbers[1],5,165);
             
               if (finalDigits[0] === correctSums[0]) {
+                  
+                 
                 context.fillStyle = "#00ff00"; 
                 context.fillText(finalDigits[0],280,165);   
               } else {
+     
                 context.fillStyle = "#ff3500";
                 context.fillText(finalDigits[0],280,165); 
                 context.fillStyle = "#00ff00";  
@@ -647,12 +648,13 @@
                                                 playerAnswersX.push(startingPoint);
                                                 playerAnswersValue.push(currentBoxIndex.toString());
                                                 playerAnswersFinal[0] = currentBoxIndex;
-                                                    
                                                 
-                                          
                                             if (playerAnswersFinal.length === len && 
                                                 playerAnswersFinal[0] !== undefined) {
-                                                evaluateAnswer();  
+                                                if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }
                                              }
                                             break;
 
@@ -660,7 +662,9 @@
                                     if (Math.abs(Mouse.x - (startingPoint + 80)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
                          
-                                                playerAnswersX.push(startingPoint + 80);
+                                                if (len >= 2) {
+                                                    playerAnswersX.push(startingPoint + 80);
+                                                }
                                                 playerAnswersValue.push(currentBoxIndex.toString());
                                                 playerAnswersFinal[1] = currentBoxIndex;
                          
@@ -669,7 +673,10 @@
                                              if (playerAnswersFinal.length === len
                                                 && playerAnswersFinal[0] !== undefined
                                                 && playerAnswersFinal[1] !== undefined) {
-                                                evaluateAnswer();  
+                                                 if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                } 
                                              }
                                              break;
 
@@ -677,7 +684,9 @@
                                     if (Math.abs(Mouse.x - (startingPoint + 160)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
                                         
-                                             playerAnswersX.push(startingPoint + 160);
+                                             if (len >= 3) {
+                                                playerAnswersX.push(startingPoint + 160);
+                                             }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[2] = currentBoxIndex;
                                             
@@ -686,7 +695,10 @@
                                                && playerAnswersFinal[0] !== undefined
                                                && playerAnswersFinal[1] !== undefined
                                                && playerAnswersFinal[2] !== undefined) {
-                                                evaluateAnswer();  
+                                                 if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }
                                              }
                                              break;
 
@@ -694,7 +706,9 @@
                                     if (Math.abs(Mouse.x - (startingPoint + 240)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
                     
-                                             playerAnswersX.push(startingPoint + 240);
+                                            if (len >= 4) {
+                                                playerAnswersX.push(startingPoint + 240);
+                                            }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[3] = currentBoxIndex;
                                         
@@ -704,7 +718,10 @@
                                                && playerAnswersFinal[1] !== undefined
                                                && playerAnswersFinal[2] !== undefined
                                                && playerAnswersFinal[3] !== undefined) {
-                                                evaluateAnswer();  
+                                                 if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }
                                              }
                                              break;
 
@@ -712,9 +729,12 @@
                                      if (Math.abs(Mouse.x - (startingPoint + 320)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
                 
-                                             playerAnswersX.push(startingPoint + 320);
-                                             playerAnswersValue.push(currentBoxIndex.toString());
-                                             playerAnswersFinal[4] = currentBoxIndex;
+                                            if (len >= 5) {
+                                                    playerAnswersX.push(startingPoint + 320);
+                                               }    
+                                                 playerAnswersValue.push(currentBoxIndex.toString());
+                                                 playerAnswersFinal[4] = currentBoxIndex;
+                                         
                                   
                                             if (playerAnswersFinal.length === len
                                                && playerAnswersFinal[0] !== undefined
@@ -722,7 +742,10 @@
                                                && playerAnswersFinal[2] !== undefined
                                                && playerAnswersFinal[3] !== undefined
                                                && playerAnswersFinal[4] !== undefined) {
-                                                evaluateAnswer();  
+                                                if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                } 
                                              }
                                              break;
 
@@ -730,10 +753,12 @@
                                        if (Math.abs(Mouse.x - (startingPoint + 400)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
                            
-                                             playerAnswersX.push(startingPoint + 400);
-                                             playerAnswersValue.push(currentBoxIndex.toString());
-                                             playerAnswersFinal[5] = currentBoxIndex;
-                                    
+                                            if (len === 6) {
+                                                    playerAnswersX.push(startingPoint + 400);
+                                            }
+                                                playerAnswersValue.push(currentBoxIndex.toString());
+                                                playerAnswersFinal[5] = currentBoxIndex;
+                                  
                   
                                             if (playerAnswersFinal.length === len
                                                && playerAnswersFinal[0] !== undefined
@@ -742,7 +767,10 @@
                                                && playerAnswersFinal[3] !== undefined
                                                && playerAnswersFinal[4] !== undefined
                                                && playerAnswersFinal[5] !== undefined) {
-                                                evaluateAnswer();  
+                                                 if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                } 
                                              }
                                              break;
                                     }
@@ -753,53 +781,46 @@
                                     if (Math.abs(Touch.x - startingPoint) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
 
-                                            context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint,360,50,50);
-                                            context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 20,395);
-
                                             playerAnswersX.push(startingPoint);
                                             playerAnswersValue.push(currentBoxIndex.toString());
                                             playerAnswersFinal[0] = currentBoxIndex;
                  
                                             if (playerAnswersFinal.length === len && 
                                                 playerAnswersFinal[0] !== undefined) {
-                                                evaluateAnswer();  
+                                                 if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }  
                                              }
                                             break;
 
                                     }
                                     if (Math.abs(Touch.x - (startingPoint + 80)) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
-                                             context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 80,360,50,50); 
-                                           context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 100,395);
-                                             playerAnswersX.push(startingPoint + 80);
+                                         
+                                             if (len >= 2) {
+                                                playerAnswersX.push(startingPoint + 80);
+                                             }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[1] = currentBoxIndex;
             
                                              if (playerAnswersFinal.length === len
                                                 && playerAnswersFinal[0] !== undefined
                                                 && playerAnswersFinal[1] !== undefined) {
-                                                evaluateAnswer();  
+                                                  if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                } 
                                              }
                                              break;
 
                                     }
                                     if (Math.abs(Touch.x - (startingPoint + 160)) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
-                                             context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 160,360,50,50);
-                                           context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 180,395);
-                                             playerAnswersX.push(startingPoint + 160);
+                                  
+                                             if (len >= 3) {
+                                                playerAnswersX.push(startingPoint + 160);
+                                             }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[2] = currentBoxIndex;
 
@@ -807,20 +828,20 @@
                                                && playerAnswersFinal[0] !== undefined
                                                && playerAnswersFinal[1] !== undefined
                                                && playerAnswersFinal[2] !== undefined) {
-                                                evaluateAnswer();  
+                                                  if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }  
                                              }
                                              break;
 
                                     }
                                     if (Math.abs(Touch.x - (startingPoint + 240)) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
-                                         context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 240,360,50,50);
-                                           context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 260,395);
-                                             playerAnswersX.push(startingPoint + 240);
+                                      
+                                             if (len >= 4) {
+                                                playerAnswersX.push(startingPoint + 240);
+                                             }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[3] = currentBoxIndex;
                                          
@@ -829,20 +850,20 @@
                                                && playerAnswersFinal[1] !== undefined
                                                && playerAnswersFinal[2] !== undefined
                                                && playerAnswersFinal[3] !== undefined) {
-                                                evaluateAnswer();  
+                                                  if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }  
                                              }
                                              break;
 
                                     }
                                      if (Math.abs(Touch.x - (startingPoint + 320)) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
-                                            context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 320,360,50,50);
-                                            context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 340,395);
-                                             playerAnswersX.push(startingPoint + 320);
+                                       
+                                             if (len >= 5) {
+                                                playerAnswersX.push(startingPoint + 320);
+                                             }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[4] = currentBoxIndex;
                                      
@@ -852,20 +873,20 @@
                                                && playerAnswersFinal[2] !== undefined
                                                && playerAnswersFinal[3] !== undefined
                                                && playerAnswersFinal[4] !== undefined) {
-                                                evaluateAnswer();  
+                                                  if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                } 
                                              }
                                              break;
 
                                     }
                                        if (Math.abs(Touch.x - (startingPoint + 400)) < 40 && 
                                         Math.abs(Touch.y - 360) < 40) {
-                                            context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 400,360,50,50);
-                                            context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 420,395);
-                                             playerAnswersX.push(startingPoint + 400);
+                                  
+                                             if (len >= 6) {    
+                                                playerAnswersX.push(startingPoint + 400);
+                                             }
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[5] = currentBoxIndex;
                                          
@@ -876,7 +897,10 @@
                                                && playerAnswersFinal[3] !== undefined
                                                && playerAnswersFinal[4] !== undefined
                                                && playerAnswersFinal[5] !== undefined) {
-                                                evaluateAnswer();  
+                                                  if (canEvaluateAnswer) {
+                                                    evaluateAnswer();  
+                                                    canEvaluateAnswer = false;    
+                                                }  
                                              }
                                              break;
                                     }
@@ -940,43 +964,41 @@
         }
     
         function evaluateAnswer() {
-            
+
             var x = parseInt(playerAnswersFinal.join(""));
           
             switch (currentTurn) {
             
                 case 1:
                     
-                finalDigits.push(x); 
+                finalDigits.push(x);   
                 switchEquation();   
                 break;
                     
                 case 2:
                     
-                finalDigits.push(x); 
-                switchEquation();        
+                finalDigits.push(x);    
+                switchEquation();  
                 break; 
                     
                 case 3: 
     
-                finalDigits.push(x); 
-                switchEquation();       
+                finalDigits.push(x);     
+                switchEquation();  
                 break;  
                     
                 case 4: 
      
-                finalDigits.push(x); 
-                switchEquation();         
+                finalDigits.push(x);   
+                switchEquation();    
                 break;
                     
                 case 5: 
    
                 finalDigits.push(x); 
-                GAMESTATE = "END_OF_GAME_SCREEN";   
+                GAMESTATE = "END_OF_GAME_SCREEN";
                 break;      
             }
-            
-  
         }
     
         function resetGame() {
@@ -998,9 +1020,13 @@
             playerAnswersX = [];
             playerAnswersValue = [];
             playerAnswersFinal = [];
+            finalDigits = [];
             currentBoxIndex = [];
             carryingNumber = false; 
+             canSwitchEquations = true;
+            canEvaluateAnswer = true;
             currentTurn = 1;
+
                 
             generateRandomNumbers(10);
         }
