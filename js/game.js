@@ -62,6 +62,7 @@
 
     var ratio = game.width / game.height;
         
+    
     var GAMESTATE = "MAIN_MENU",
         
         titleColor = "#0B9CE5",
@@ -92,6 +93,9 @@
         Touch = {};
   
 
+    var pop = new Audio();
+    pop.src = "../audio/pop.wav";
+    
     window.addEventListener("mousemove",function onMouseMove(evt) {
         
         Mouse.x = evt.x;
@@ -350,6 +354,7 @@
         canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
         
         carryingNumber = false;
+        
   
     });
     
@@ -613,6 +618,7 @@
 
                     var startingPoint;
                     
+                    
                     for (var i = 0; i < len; i++) {
 
                         if (len === 2) {
@@ -626,28 +632,24 @@
                         } else {
                             startingPoint = 60;   
                         }
-                        context.fillStyle = "#ccc";
+                        context.fillStyle = "#ccc";    
                         context.fillRect(startingPoint + i * 80,360,50,50); 
-                        
-   
+                    }
+    
+                         for (var i = 0; i < len; i++) {
                             if (carryingNumber) {
-                                
+                        
                                 if (Touch.x === undefined) {  //IF PLAYER IS USING MOUSE CONTROLS
                         
                                     if (Math.abs(Mouse.x - startingPoint) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
-
-                                            context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint,360,50,50);
-                                            context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 20,395);
-
-                                            playerAnswersX.push(startingPoint);
-                                            playerAnswersValue.push(currentBoxIndex.toString());
-                                            playerAnswersFinal[0] = currentBoxIndex;
-   
+                           
+                                                playerAnswersX.push(startingPoint);
+                                                playerAnswersValue.push(currentBoxIndex.toString());
+                                                playerAnswersFinal[0] = currentBoxIndex;
+                                                    
+                                                
+                                          
                                             if (playerAnswersFinal.length === len && 
                                                 playerAnswersFinal[0] !== undefined) {
                                                 evaluateAnswer();  
@@ -657,15 +659,12 @@
                                     }
                                     if (Math.abs(Mouse.x - (startingPoint + 80)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
-                                             context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 80,360,50,50); 
-                                           context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 100,395);
-                                             playerAnswersX.push(startingPoint + 80);
-                                             playerAnswersValue.push(currentBoxIndex.toString());
-                                             playerAnswersFinal[1] = currentBoxIndex;
+                         
+                                                playerAnswersX.push(startingPoint + 80);
+                                                playerAnswersValue.push(currentBoxIndex.toString());
+                                                playerAnswersFinal[1] = currentBoxIndex;
+                         
+                                  
                             
                                              if (playerAnswersFinal.length === len
                                                 && playerAnswersFinal[0] !== undefined
@@ -677,15 +676,11 @@
                                     }
                                     if (Math.abs(Mouse.x - (startingPoint + 160)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
-                                             context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 160,360,50,50);
-                                           context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 180,395);
+                                        
                                              playerAnswersX.push(startingPoint + 160);
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[2] = currentBoxIndex;
+                                            
                      
                                             if (playerAnswersFinal.length === len
                                                && playerAnswersFinal[0] !== undefined
@@ -698,15 +693,11 @@
                                     }
                                     if (Math.abs(Mouse.x - (startingPoint + 240)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
-                                         context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 240,360,50,50);
-                                           context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 260,395);
+                    
                                              playerAnswersX.push(startingPoint + 240);
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[3] = currentBoxIndex;
+                                        
                    
                                             if (playerAnswersFinal.length === len
                                                && playerAnswersFinal[0] !== undefined
@@ -720,16 +711,11 @@
                                     }
                                      if (Math.abs(Mouse.x - (startingPoint + 320)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
-                                            context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 320,360,50,50);
-                                            context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 340,395);
+                
                                              playerAnswersX.push(startingPoint + 320);
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[4] = currentBoxIndex;
-                       
+                                  
                                             if (playerAnswersFinal.length === len
                                                && playerAnswersFinal[0] !== undefined
                                                && playerAnswersFinal[1] !== undefined
@@ -743,15 +729,11 @@
                                     }
                                        if (Math.abs(Mouse.x - (startingPoint + 400)) < 40 && 
                                         Math.abs(Mouse.y - 360) < 40) {
-                                            context.fillStyle = "#eee";
-                                            context.fillRect(startingPoint + 400,360,50,50);
-                                            context.fillStyle = "#ffb800";
-                                            context.font = "20pt Verdana";
-                                            context.fillText(currentBoxIndex.toString(),
-                                                             startingPoint + 420,395);
+                           
                                              playerAnswersX.push(startingPoint + 400);
                                              playerAnswersValue.push(currentBoxIndex.toString());
                                              playerAnswersFinal[5] = currentBoxIndex;
+                                    
                   
                                             if (playerAnswersFinal.length === len
                                                && playerAnswersFinal[0] !== undefined
