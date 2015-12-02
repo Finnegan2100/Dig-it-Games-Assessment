@@ -3,14 +3,21 @@
     var canvas = document.getElementById("myCanvas"),
         context = canvas.getContext("2d"),
         
-        GAMESTATE = "EQUATION_SCREEN",
+        GAMESTATE = "MAIN_MENU",
+        
         titleColor = "#0B9CE5",
+        titleColorEnd1 = "#0B9CE5",
+        titleColorEnd2 = "#0B9CE5",
+        
+        overStartButton = false,
+        overMainMenuButton = false,
+        overNewGameButton = false,
+        
         numbers = [],
         correctSums = [],
+        playerAnswers = [],
         equationNumber = 1;
     
-    
-    //COMMENT FOR GIT
     window.addEventListener("mousemove",function onMouseMove(evt) {
         
         var x = evt.x;
@@ -19,19 +26,71 @@
         x -= canvas.offsetLeft;
         y -= canvas.offsetTop;
         
-        if (evt.x > 228 && evt.x < 362) {
-            if (evt.y > 414 && evt.y < 464) {
-                titleColor = "#f00";
-                //render();
+        console.log(x,y);
+        
+        if (GAMESTATE === "MAIN_MENU") {
+        
+            if (evt.x > 228 && evt.x < 362) {
+                if (evt.y > 414 && evt.y < 464) {
+                    titleColor = "#f00";
+                    overStartButton = true;
+                    render();
+                } else {
+                    titleColor = "#0B9CE5";
+                    overStartButton = false;
+                    render(); 
+                }
             } else {
                 titleColor = "#0B9CE5";
-                //render(); 
+                overStartButton = false;
+                render(); 
             }
-        } else {
-            titleColor = "#0B9CE5";
-            //render(); 
+        }
+        
+         if (GAMESTATE === "END_OF_GAME_SCREEN") {
+        
+            if (evt.x > 40 && evt.x < 180) {
+                if (evt.y > 440 && evt.y < 500) {
+                    titleColorEnd1 = "#f00";
+                    render();
+                } else {
+                    titleColorEnd1 = "#0B9CE5";
+                    render(); 
+                }
+            } else {
+                titleColorEnd1 = "#0B9CE5";
+                render(); 
+            }
+             
+             
+             if (evt.x > 410 && evt.x < 550) {
+                if (evt.y > 440 && evt.y < 500) {
+                    titleColorEnd2 = "#f00";
+                    render();
+                } else {
+                    titleColorEnd2 = "#0B9CE5";
+                    render(); 
+                }
+            } else {
+                titleColorEnd2 = "#0B9CE5";
+                render(); 
+            } 
         }
     });
+    
+    window.addEventListener("click",function onClick(evt) {
+        
+        var x = evt.x;
+        var y = evt.y;
+
+        x -= canvas.offsetLeft;
+        y -= canvas.offsetTop;
+        
+        if (overStartButton) {
+            GAMESTATE = "EQUATION_SCREEN";
+            render();
+        }  
+    })
     
     function generateRandomNumbers(total) {
         
@@ -59,7 +118,6 @@
                 break;    
             }
                 numbers.push(result);  
-                console.log(numbers);
                 correctSums = [numbers[0] + numbers[1], numbers[2] + numbers[3],
                                numbers[4] + numbers[5], numbers[6] + numbers[7],
                                numbers[8] + numbers[9]];
@@ -69,9 +127,9 @@
     generateRandomNumbers(10);
     render();
       
-    
     function render() {
         
+        context.clearRect(0,0,canvas.width,canvas.height);
         switch(GAMESTATE) {
                 
             case "MAIN_MENU":
@@ -140,8 +198,49 @@
                 drawAnswerBoxes(correctSums[0].toString().length);      
                 break;         
             }
+            drawSelectableNumbers(10);       
+            break;
                 
-            drawSelectableNumbers(10);    
+            case "END_OF_GAME_SCREEN":
+            
+                
+            context.font = "36pt Verdana";    
+            context.fillStyle = "#fff"; 
+            context.fillText("RESULTS",200,65);     
+                
+            context.font = "22pt Verdana";    
+            context.fillStyle = "#fff";
+                
+            context.fillText(numbers[0] + " + " + numbers[1],5,165); 
+            context.fillText(correctSums[0],475,165);
+                
+            context.fillText(numbers[2] + " + " + numbers[3],5,235); 
+            context.fillText(correctSums[1],475,235); 
+                
+            context.fillText(numbers[4] + " + " + numbers[5],5,305); 
+            context.fillText(correctSums[2],475,305);
+                
+            context.fillText(numbers[6] + " + " + numbers[7],5,375); 
+            context.fillText(correctSums[3],475,375);   
+            
+            context.fillText(numbers[8] + " + " + numbers[9],5,445); 
+            context.fillText(correctSums[4],475,445);
+                
+            context.fillStyle = "#fff";    
+            context.fillRect(30,500,160,80);
+                
+            context.fillStyle = "#fff";    
+            context.fillRect(410,500,160,80);    
+                
+            context.font = "18pt Verdana";
+            context.fillStyle = titleColorEnd1;
+            context.fillText("NEW GAME",40,550);
+            context.fillStyle = titleColorEnd2;    
+            context.fillText("MAIN MENU",420,550);    
+            break;    
+                
+                
+             
                 
                 function drawAnswerBoxes(len) {
 
