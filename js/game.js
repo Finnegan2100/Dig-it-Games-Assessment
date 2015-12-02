@@ -16,12 +16,16 @@
         overNumberButtons = [false,false,false,false,false,false,false,false,false,false],
         canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false],
         numberButtonXCoords = [],
+        answerSpaceCoords = [],
         currentBoxIndex,
         carryingNumber = false,
         
         numbers = [],
         correctSums = [],
-        playerAnswers = [],
+        playerAnswersX = [],
+        playerAnswersValue = [],
+        playerAnswersFinal = [],
+        finalDigits = [],
         currentTurn = 1,
         
         Mouse = {};
@@ -93,7 +97,7 @@
         }
     });
     
-    window.addEventListener("click",function onClick(evt) {
+    window.addEventListener("mousedown",function onClick(evt) {
         
         var x = evt.x;
         var y = evt.y;
@@ -130,14 +134,27 @@
                 }  
             }
          }
+    });
+    
+    window.addEventListener("mouseup",function onClick(evt) {
         
-        if (carryingNumber) {
-            console.log("hello!");  
-        }
-    })
+        
+        overNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+        canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+        
+        carryingNumber = false;
+  
+    });
     
     function switchEquation() {
         
+        playerAnswersX = [];
+        playerAnswersValue = [];
+        playerAnswersFinal = [];
+        overNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+        canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+        currentBoxIndex = [];
+        carryingNumber = false;        
         currentTurn++;
     }
     
@@ -267,7 +284,15 @@
                 drawAnswerBoxes(correctSums[4].toString().length);      
                 break;         
             }
-                        
+                
+            for (i = 0; i < playerAnswersX.length; i++) {
+                context.fillStyle = "#eee";
+                context.fillRect(playerAnswersX[i],360,50,50); 
+                context.fillStyle = "#ffb800";
+                context.font = "20pt Verdana";
+                context.fillText(playerAnswersValue[i],playerAnswersX[i] + 15,395);
+            }
+  
             drawSelectableNumbers(10);       
             break;
                 
@@ -328,48 +353,140 @@
                         }
                         context.fillStyle = "#ccc";
                         context.fillRect(startingPoint + i * 80,360,50,50); 
+   
+                            if (carryingNumber) {
                         
-                        if (carryingNumber) {
-                            if (Math.abs(Mouse.x - startingPoint) < 40 && 
-                                Math.abs(Mouse.y - 360) < 40) {
-                                    context.fillStyle = "#ffb800";
-                                    context.font = "20pt Verdana";
-                                    context.fillText(currentBoxIndex.toString(),
-                                                     startingPoint + 20,395);
+                                if (Math.abs(Mouse.x - startingPoint) < 40 && 
+                                    Math.abs(Mouse.y - 360) < 40) {
+
+                                        context.fillStyle = "#eee";
+                                        context.fillRect(startingPoint,360,50,50);
+                                        context.fillStyle = "#ffb800";
+                                        context.font = "20pt Verdana";
+                                        context.fillText(currentBoxIndex.toString(),
+                                                         startingPoint + 20,395);
+
+                                        playerAnswersX.push(startingPoint);
+                                        playerAnswersValue.push(currentBoxIndex.toString());
+                                        playerAnswersFinal[0] = currentBoxIndex;
+                                        console.log(playerAnswersFinal.length, len);
+                                        if (playerAnswersFinal.length === len && 
+                                            playerAnswersFinal[0] !== undefined) {
+                                            evaluateAnswer();  
+                                         }
+                                        break;
+
+                                }
+                                if (Math.abs(Mouse.x - (startingPoint + 80)) < 40 && 
+                                    Math.abs(Mouse.y - 360) < 40) {
+                                         context.fillStyle = "#eee";
+                                        context.fillRect(startingPoint + 80,360,50,50); 
+                                       context.fillStyle = "#ffb800";
+                                        context.font = "20pt Verdana";
+                                        context.fillText(currentBoxIndex.toString(),
+                                                         startingPoint + 100,395);
+                                         playerAnswersX.push(startingPoint + 80);
+                                         playerAnswersValue.push(currentBoxIndex.toString());
+                                         playerAnswersFinal[1] = currentBoxIndex;
+                                         console.log(playerAnswersFinal.length, len);
+                                         if (playerAnswersFinal.length === len
+                                            && playerAnswersFinal[0] !== undefined
+                                            && playerAnswersFinal[1] !== undefined) {
+                                            evaluateAnswer();  
+                                         }
+                                         break;
+
+                                }
+                                if (Math.abs(Mouse.x - (startingPoint + 160)) < 40 && 
+                                    Math.abs(Mouse.y - 360) < 40) {
+                                         context.fillStyle = "#eee";
+                                        context.fillRect(startingPoint + 160,360,50,50);
+                                       context.fillStyle = "#ffb800";
+                                        context.font = "20pt Verdana";
+                                        context.fillText(currentBoxIndex.toString(),
+                                                         startingPoint + 180,395);
+                                         playerAnswersX.push(startingPoint + 160);
+                                         playerAnswersValue.push(currentBoxIndex.toString());
+                                         playerAnswersFinal[2] = currentBoxIndex;
+                                         console.log(playerAnswersFinal.length, len);
+                                        if (playerAnswersFinal.length === len
+                                           && playerAnswersFinal[0] !== undefined
+                                           && playerAnswersFinal[1] !== undefined
+                                           && playerAnswersFinal[2] !== undefined) {
+                                            evaluateAnswer();  
+                                         }
+                                         break;
+
+                                }
+                                if (Math.abs(Mouse.x - (startingPoint + 240)) < 40 && 
+                                    Math.abs(Mouse.y - 360) < 40) {
+                                     context.fillStyle = "#eee";
+                                        context.fillRect(startingPoint + 240,360,50,50);
+                                       context.fillStyle = "#ffb800";
+                                        context.font = "20pt Verdana";
+                                        context.fillText(currentBoxIndex.toString(),
+                                                         startingPoint + 260,395);
+                                         playerAnswersX.push(startingPoint + 240);
+                                         playerAnswersValue.push(currentBoxIndex.toString());
+                                         playerAnswersFinal[3] = currentBoxIndex;
+                                         console.log(playerAnswersFinal.length, len);
+                                        if (playerAnswersFinal.length === len
+                                           && playerAnswersFinal[0] !== undefined
+                                           && playerAnswersFinal[1] !== undefined
+                                           && playerAnswersFinal[2] !== undefined
+                                           && playerAnswersFinal[3] !== undefined) {
+                                            evaluateAnswer();  
+                                         }
+                                         break;
+
+                                }
+                                 if (Math.abs(Mouse.x - (startingPoint + 320)) < 40 && 
+                                    Math.abs(Mouse.y - 360) < 40) {
+                                        context.fillStyle = "#eee";
+                                        context.fillRect(startingPoint + 320,360,50,50);
+                                        context.fillStyle = "#ffb800";
+                                        context.font = "20pt Verdana";
+                                        context.fillText(currentBoxIndex.toString(),
+                                                         startingPoint + 340,395);
+                                         playerAnswersX.push(startingPoint + 320);
+                                         playerAnswersValue.push(currentBoxIndex.toString());
+                                         playerAnswersFinal[4] = currentBoxIndex;
+                                         console.log(playerAnswersFinal.length, len);
+                                        if (playerAnswersFinal.length === len
+                                           && playerAnswersFinal[0] !== undefined
+                                           && playerAnswersFinal[1] !== undefined
+                                           && playerAnswersFinal[2] !== undefined
+                                           && playerAnswersFinal[3] !== undefined
+                                           && playerAnswersFinal[4] !== undefined) {
+                                            evaluateAnswer();  
+                                         }
+                                         break;
+
+                                }
+                                   if (Math.abs(Mouse.x - (startingPoint + 400)) < 40 && 
+                                    Math.abs(Mouse.y - 360) < 40) {
+                                        context.fillStyle = "#eee";
+                                        context.fillRect(startingPoint + 400,360,50,50);
+                                        context.fillStyle = "#ffb800";
+                                        context.font = "20pt Verdana";
+                                        context.fillText(currentBoxIndex.toString(),
+                                                         startingPoint + 420,395);
+                                         playerAnswersX.push(startingPoint + 400);
+                                         playerAnswersValue.push(currentBoxIndex.toString());
+                                         playerAnswersFinal[5] = currentBoxIndex;
+                                         console.log(playerAnswersFinal.length, len);
+                                        if (playerAnswersFinal.length === len
+                                           && playerAnswersFinal[0] !== undefined
+                                           && playerAnswersFinal[1] !== undefined
+                                           && playerAnswersFinal[2] !== undefined
+                                           && playerAnswersFinal[3] !== undefined
+                                           && playerAnswersFinal[4] !== undefined
+                                           && playerAnswersFinal[5] !== undefined) {
+                                            evaluateAnswer();  
+                                         }
+                                         break;
+                                }
                             }
-                            if (Math.abs(Mouse.x - (startingPoint + 80)) < 40 && 
-                                Math.abs(Mouse.y - 360) < 40) {
-                                   context.fillStyle = "#ffb800";
-                                    context.font = "20pt Verdana";
-                                    context.fillText(currentBoxIndex.toString(),
-                                                     startingPoint + 100,395);
-                                
-                            }
-                            if (Math.abs(Mouse.x - (startingPoint + 160)) < 40 && 
-                                Math.abs(Mouse.y - 360) < 40) {
-                                   context.fillStyle = "#ffb800";
-                                    context.font = "20pt Verdana";
-                                    context.fillText(currentBoxIndex.toString(),
-                                                     startingPoint + 180,395);
-                                 
-                            }
-                            if (Math.abs(Mouse.x - (startingPoint + 240)) < 40 && 
-                                Math.abs(Mouse.y - 360) < 40) {
-                                   context.fillStyle = "#ffb800";
-                                    context.font = "20pt Verdana";
-                                    context.fillText(currentBoxIndex.toString(),
-                                                     startingPoint + 260,395);
-                                
-                            }
-                             if (Math.abs(Mouse.x - (startingPoint + 320)) < 40 && 
-                                Math.abs(Mouse.y - 360) < 40) {
-                                    context.fillStyle = "#ffb800";
-                                    context.font = "20pt Verdana";
-                                    context.fillText(currentBoxIndex.toString(),
-                                                     startingPoint + 340,395);
-                                  
-                            }
-                        }
                     }   
                 }
                 
@@ -386,7 +503,9 @@
                         x = 20 + i * 57;
                         numberButtonXCoords.push(x);
                       
-                        if (i === currentBoxIndex && Mouse.y < 540 && Mouse.y > 300) {
+                        if (i === currentBoxIndex && Mouse.y < 540 && Mouse.y > 300 &&
+                            overNumberButtons[i] === true) {
+                            
                             carryingNumber = true;
                             context.fillRect(Mouse.x - 15,Mouse.y - 15,w,h);
                             context.fillStyle = "#ffb800";
@@ -403,9 +522,57 @@
             }   
         }
     
-        function resetGame() {
+        function evaluateAnswer() {
             
-           // GAMESTATE = "MAIN_MENU";
+            var x = parseInt(playerAnswersFinal.join(""));
+          
+            switch (currentTurn) {
+            
+                case 1: 
+                if (correctSums[0] === x) {
+                    console.log("bingo!");   
+                } 
+                finalDigits.push(x); 
+                switchEquation();    
+                break;
+                    
+                case 2: 
+                if (correctSums[1] === x) {
+                    console.log("bingo!");   
+                }   
+                finalDigits.push(x); 
+                switchEquation();      
+                break; 
+                    
+                case 3: 
+                if (correctSums[2] === x) {
+                    console.log("bingo!");   
+                }    
+                finalDigits.push(x); 
+                switchEquation();      
+                break;  
+                    
+                case 4: 
+                if (correctSums[3] === x) {
+                    console.log("bingo!");   
+                }   
+                finalDigits.push(x); 
+                switchEquation();      
+                break;
+                    
+                case 5: 
+                if (correctSums[4] === x) {
+                    console.log("bingo!");   
+                }   
+                finalDigits.push(x); 
+                GAMESTATE = "END_OF_GAME_SCREEN";      
+                break;      
+            }
+            
+  
+        }
+    
+        function resetGame() {
         
             titleColor = "#0B9CE5";
             titleColorEnd1 = "#0B9CE5";
@@ -421,9 +588,13 @@
                 
             numbers = [];
             correctSums = [];
-            playerAnswers = [];
+            playerAnswersX = [];
+            playerAnswersValue = [];
+            playerAnswersFinal = [];
+            currentBoxIndex = [];
+            carryingNumber = false; 
             currentTurn = 1;
-                    
+                
             generateRandomNumbers(10);
         }
         
