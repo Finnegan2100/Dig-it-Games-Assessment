@@ -8,30 +8,36 @@
         titleColor = "#0B9CE5",
         titleColorEnd1 = "#0B9CE5",
         titleColorEnd2 = "#0B9CE5",
+                
+        overStartButton,
+        overMainMenuButton,
+        overNewGameButton,
         
-        overStartButton = false,
-        overMainMenuButton = false,
-        overNewGameButton = false,
+        overNumberButtons = [false,false,false,false,false,false,false,false,false,false],
+        canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false],
+        numberButtonXCoords = [],
         
         numbers = [],
         correctSums = [],
         playerAnswers = [],
-        equationNumber = 1;
-    
+        currentTurn = 2,
+        
+        Mouse = {};
+  
+
     window.addEventListener("mousemove",function onMouseMove(evt) {
         
-        var x = evt.x;
-        var y = evt.y;
+        Mouse.x = evt.x;
+        Mouse.y = evt.y;
 
-        x -= canvas.offsetLeft;
-        y -= canvas.offsetTop;
-        
-        console.log(x,y);
+        Mouse.x -= canvas.offsetLeft;
+        Mouse.y -= canvas.offsetTop;
+  
         
         if (GAMESTATE === "MAIN_MENU") {
         
-            if (evt.x > 228 && evt.x < 362) {
-                if (evt.y > 414 && evt.y < 464) {
+            if (Mouse.x > 228 && Mouse.x < 362) {
+                if (Mouse.y > 414 && Mouse.y < 464) {
                     titleColor = "#f00";
                     overStartButton = true;
                     render();
@@ -47,32 +53,54 @@
             }
         }
         
+         if (GAMESTATE === "EQUATION_SCREEN") {
+             
+             for (var i = 0; i < 10; i++) {
+                 
+                 if (Mouse.x > numberButtonXCoords[i] && Mouse.x < numberButtonXCoords[i] + 50) {
+                     if (Mouse.y > 490 && Mouse.y < 550) {
+                         overNumberButtons[i] = true;                     
+                     } else {
+                         overNumberButtons[i] = false;
+                 }   
+             } else {
+                     overNumberButtons[i] = false;
+                }  
+            }
+         }
+        
          if (GAMESTATE === "END_OF_GAME_SCREEN") {
         
-            if (evt.x > 40 && evt.x < 180) {
-                if (evt.y > 440 && evt.y < 500) {
+            if (Mouse.x > 40 && Mouse.x < 180) {
+                if (Mouse.y > 500 && Mouse.y < 570) {
                     titleColorEnd1 = "#f00";
+                    overNewGameButton = true;
                     render();
                 } else {
                     titleColorEnd1 = "#0B9CE5";
+                    overNewGameButton = false;
                     render(); 
                 }
             } else {
                 titleColorEnd1 = "#0B9CE5";
+                overNewGameButton = false;
                 render(); 
             }
              
              
-             if (evt.x > 410 && evt.x < 550) {
-                if (evt.y > 440 && evt.y < 500) {
+             if (Mouse.x > 410 && Mouse.x < 550) {
+                if (Mouse.y > 500 && Mouse.y < 570) {
                     titleColorEnd2 = "#f00";
+                    overMainMenuButton = true;
                     render();
                 } else {
                     titleColorEnd2 = "#0B9CE5";
+                    overMainMenuButton = false;
                     render(); 
                 }
             } else {
                 titleColorEnd2 = "#0B9CE5";
+                overMainMenuButton = false;
                 render(); 
             } 
         }
@@ -82,7 +110,7 @@
         
         var x = evt.x;
         var y = evt.y;
-
+ 
         x -= canvas.offsetLeft;
         y -= canvas.offsetTop;
         
@@ -90,6 +118,21 @@
             GAMESTATE = "EQUATION_SCREEN";
             render();
         }  
+        if (overMainMenuButton) {
+            GAMESTATE = "MAIN_MENU";
+            resetGame();
+        }
+        if (overNewGameButton) {
+            GAMESTATE = "EQUATION_SCREEN";
+            resetGame();
+        }
+        for (var i = 0; i < 10; i++) {
+            if (overNumberButtons[i] === true) {
+                canMoveNumberButtons[i] = true;
+            } else {
+                canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];  
+            }
+        }
     })
     
     function generateRandomNumbers(total) {
@@ -125,10 +168,17 @@
     }
     
     generateRandomNumbers(10);
-    render();
-      
-    function render() {
+    update();
+    
+    function update() {
         
+        render();
+        window.setTimeout(update,30);
+              
+    }
+          
+    function render() {
+                
         context.clearRect(0,0,canvas.width,canvas.height);
         switch(GAMESTATE) {
                 
@@ -152,21 +202,33 @@
             context.fillStyle = "#fff";
             context.fillText("FIND THE SUM OF THE TWO NUMBERS",10,100);
                 
-            context.fillStyle = "#eee";    
-            context.fillRect(50,190,200,100);
+            context.fillStyle = "#eee";  
+             if (currentTurn % 2 !== 0) {     
+                context.fillRect(50,190,200,100);
+             } else {
+                context.fillRect(200,130,200,100);     
+             }
                 
             context.font = "44pt Verdana";    
             context.fillStyle = "#fff";
-            context.fillText("+",267,265);    
                 
-            context.fillStyle = "#eee";    
-            context.fillRect(330,190,200,100); 
+            if (currentTurn % 2 !== 0) {    
+                context.fillText("+",267,265);  
+            } else {
+                context.fillText("+",140,265);  
+            }
+                
+            context.fillStyle = "#eee";  
+             if (currentTurn % 2 !== 0) {       
+                context.fillRect(330,190,200,100);
+             } else {
+                context.fillRect(200,240,200,100); 
+             }
             
             context.font = "30pt Verdana";      
             context.fillStyle = "#ffb800"; 
                 
-            switch (equationNumber) {
-              
+            switch (currentTurn) {
                     
                 case 1: 
                 context.fillText(numbers[0],100,260);
@@ -175,35 +237,35 @@
                 break; 
                     
                 case 2: 
-                context.fillText(numbers[2],100,260);
-                context.fillText(numbers[3],370,260);
-                drawAnswerBoxes(correctSums[0].toString().length);      
+                context.fillText(numbers[2],240,200);
+                context.fillText(numbers[3],240,320);
+                drawAnswerBoxes(correctSums[1].toString().length);      
                 break; 
                     
                 case 3: 
                 context.fillText(numbers[4],100,260);
                 context.fillText(numbers[5],370,260);
-                drawAnswerBoxes(correctSums[0].toString().length);      
+                drawAnswerBoxes(correctSums[2].toString().length);      
                 break; 
                     
                 case 4: 
                 context.fillText(numbers[6],100,260);
                 context.fillText(numbers[7],370,260);
-                drawAnswerBoxes(correctSums[0].toString().length);      
+                drawAnswerBoxes(correctSums[3].toString().length);      
                 break;  
                     
                 case 5: 
                 context.fillText(numbers[8],100,260);
                 context.fillText(numbers[9],370,260);
-                drawAnswerBoxes(correctSums[0].toString().length);      
+                drawAnswerBoxes(correctSums[4].toString().length);      
                 break;         
             }
+                        
             drawSelectableNumbers(10);       
             break;
                 
             case "END_OF_GAME_SCREEN":
             
-                
             context.font = "36pt Verdana";    
             context.fillStyle = "#fff"; 
             context.fillText("RESULTS",200,65);     
@@ -240,8 +302,6 @@
             break;    
                 
                 
-             
-                
                 function drawAnswerBoxes(len) {
 
                     var startingPoint;
@@ -265,16 +325,56 @@
                 }
                 
                 function drawSelectableNumbers(num) {
-                 
+                    
+                    var x,
+                        y = 500,
+                        w = 50,
+                        h = 50;
+                    
                     for (var i = 0; i < num; i++) {
+    
                         context.fillStyle = "#eee";
-                        context.fillRect(20 + i * 57,500,50,50);
+                        x = 20 + i * 57;
+                        numberButtonXCoords.push(x);
+                            
+                         if (canMoveNumberButtons[i] === true) {
+                            x = Mouse.x;
+                             y = Mouse.y;
+                        }
+                        
+                        context.fillRect(x,y,w,h);
                         context.fillStyle = "#ffb800";
                         context.font = "20pt Verdana";
                         context.fillText(i.toString(),35 + i * 57,535);
+                        
+                        
                     }
                 }
             }   
+        }
+    
+        function resetGame() {
+            
+           // GAMESTATE = "MAIN_MENU";
+        
+            titleColor = "#0B9CE5";
+            titleColorEnd1 = "#0B9CE5";
+            titleColorEnd2 = "#0B9CE5";
+        
+            overStartButton = false;
+            overMainMenuButton = false;
+            overNewGameButton = false;
+        
+            overNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+            canMoveNumberButtons = [false,false,false,false,false,false,false,false,false,false];
+            numberButtonXCoords = [];
+                
+            numbers = [];
+            correctSums = [];
+            playerAnswers = [];
+            currentTurn = 1;
+                    
+            generateRandomNumbers(10);
         }
         
 })();

@@ -1,3 +1,9 @@
 canvas {
     background-color: #0de;
 }
+body {
+        
+    margin-left: 0;
+    padding: 0;
+    text-align: center;
+}
